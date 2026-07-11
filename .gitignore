@@ -1,0 +1,11 @@
+vendor/
+composer.phar
+.env
+.DS_Store
+.vscode/
+node_modules/
+.idea/
+uploads/
+dev/
+docs/
+database/*.sql
