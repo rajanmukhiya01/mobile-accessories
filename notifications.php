@@ -16,6 +16,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 require_once "config.php";
 require_once __DIR__ . '/includes/notification_service.php';
+require_once __DIR__ . '/components/user_layout.php';
 
 $user_id = $_SESSION['user_id'];
 $success_msg = '';
@@ -120,6 +121,66 @@ if ($stmt_last) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css">
     <style>
+        .container-main {
+            display: flex;
+            min-height: calc(100vh - 64px);
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #001a33;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 64px;
+            left: 0;
+            height: calc(100vh - 64px);
+            z-index: 900;
+            overflow-y: auto;
+        }
+
+        .sidebar a,
+        .sidebar button,
+        .sidebar-logout-btn {
+            display: block;
+            width: 100%;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .sidebar a:hover,
+        .sidebar button:hover,
+        .sidebar-logout-btn:hover,
+        .sidebar a.active {
+            background: #003366;
+            border-left-color: #3498db;
+            padding-left: 30px;
+            color: #fff;
+        }
+
+        .sidebar a i,
+        .sidebar button i,
+        .sidebar-logout-btn i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .content-wrapper {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+            padding-top: 24px;
+        }
+
         .notification-header {
             background: linear-gradient(135deg, #001a33 0%, #003366 100%);
             color: white;
@@ -364,30 +425,17 @@ if ($stmt_last) {
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar" style="background: linear-gradient(135deg, #001a33 0%, #003366 100%); color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div style="display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700;">
-            <i class="fas fa-shopping-bag"></i>
-            <span>BAZARIO</span>
-        </div>
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <a href="user_dashboard.php" style="color: white; text-decoration: none; font-size: 14px;"><i class="fas fa-home"></i> Shop</a>
-            <a href="orders_new.php" style="color: white; text-decoration: none; font-size: 14px;"><i class="fas fa-shopping-bag"></i> My Orders</a>
-            <a href="profile.php" style="color: white; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 5px;"><?php echo get_user_avatar_html($user, 'sm'); ?> Profile</a>
-            <form action="logout.php" method="POST" style="margin: 0; display: inline;">
-                <button type="submit" style="background: none; border: none; color: white; cursor: pointer; font-size: 14px;"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </form>
-        </div>
-    </div>
+    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'notifications'); ?>
 
-    <div class="main-container" style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+    <div class="container-main">
+        <?php echo render_user_sidebar('notifications'); ?>
         <!-- Header -->
-        <div class="notification-header" style="background: linear-gradient(135deg, #001a33 0%, #003366 100%); color: white; padding: 40px 0; margin-bottom: 30px;">
+        <div class="content-wrapper">
+            <div class="notification-header" style="background: linear-gradient(135deg, #001a33 0%, #003366 100%); color: white; padding: 40px 0; margin-bottom: 30px;">
             <h1 style="margin-bottom: 5px;">Notifications</h1>
             <p style="opacity: 0.9; margin: 0;">Stay updated with your orders and exclusive offers</p>
         </div>
 
-        <div class="content-wrapper">
             <!-- Success/Error Messages -->
             <?php if ($success_msg): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

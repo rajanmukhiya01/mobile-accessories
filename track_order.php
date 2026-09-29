@@ -54,6 +54,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
 
 require_once "config.php";
 require_once __DIR__ . '/includes/notification_service.php';
+require_once __DIR__ . '/components/user_layout.php';
 
 $user_id = $_SESSION['user_id'];
 $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
@@ -254,21 +255,9 @@ if ($stmt_last) {
     </style>
 </head>
 <body>
-    <div class="navbar-top">
-        <div class="navbar-brand-text"><i class="fas fa-shopping-bag"></i> Mobile Accessories</div>
-        <div class="navbar-icons">
-            <a href="notifications.php" title="Notifications"><i class="fas fa-bell"></i><?php if ($unread_count > 0): ?><span class="notification-badge"><?php echo $unread_count; ?></span><?php endif; ?></a>
-            <a href="profile.php" title="Profile"><?php echo get_user_avatar_html($current_user, 'sm'); ?></a>
-        </div>
-    </div>
+    <?php echo render_user_navbar($current_user, $unread_count, 'navbar', 'BAZARIO', false, 'orders'); ?>
 
-    <div class="sidebar">
-        <a href="user_dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="user_dashboard.php"><i class="fas fa-store"></i> Shop</a>
-        <a href="orders_new.php" class="active"><i class="fas fa-box"></i> My Orders</a>
-        <a href="profile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
+    <?php echo render_user_sidebar('orders'); ?>
 
     <div class="main-content">
         <div class="hero-card">

@@ -135,8 +135,10 @@ while ($row = $result->fetch_assoc()) {
             z-index: 900;
             overflow-y: auto;
         }
-        
-        .sidebar a, .sidebar button {
+
+        .sidebar a,
+        .sidebar button,
+        .sidebar-logout-btn {
             display: block;
             width: 100%;
             color: #ecf0f1;
@@ -150,14 +152,20 @@ while ($row = $result->fetch_assoc()) {
             cursor: pointer;
             font-size: 15px;
         }
-        
-        .sidebar a:hover, .sidebar button:hover {
+
+        .sidebar a:hover,
+        .sidebar button:hover,
+        .sidebar-logout-btn:hover,
+        .sidebar a.active {
             background: #003366;
             border-left-color: #3498db;
             padding-left: 30px;
+            color: #fff;
         }
-        
-        .sidebar a i, .sidebar button i {
+
+        .sidebar a i,
+        .sidebar button i,
+        .sidebar-logout-btn i {
             margin-right: 10px;
             width: 20px;
         }
@@ -497,23 +505,7 @@ while ($row = $result->fetch_assoc()) {
 
     <!-- Main Container with Sidebar -->
     <div class="container-main">
-        <!-- Sidebar Navigation -->
-        <div class="sidebar">
-            <a href="user_dashboard.php">
-                <i class="fas fa-home"></i> Home
-            </a>
-            <a href="orders_new.php">
-                <i class="fas fa-shopping-bag"></i> My Orders
-            </a>
-            <a href="profile.php">
-                <i class="fas fa-user-circle"></i> Profile
-            </a>
-            <form action="logout.php" method="POST" style="margin: 0; padding: 0;">
-                <button type="submit" class="sidebar-logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
-        </div>
+        <?php echo render_user_sidebar('dashboard'); ?>
 
         <!-- Content Area -->
         <div class="content">

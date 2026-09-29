@@ -466,41 +466,9 @@ $total_orders = array_sum($status_counts);
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <div class="navbar-top">
-        <div class="navbar-brand-text">
-            <i class="fas fa-shopping-bag"></i> Mobile Accessories
-        </div>
-        <div class="navbar-icons">
-            <a href="notifications.php" title="Notifications">
-                <i class="fas fa-bell"></i>
-                <?php if ($unread_count > 0): ?>
-                    <span class="notification-badge"><?php echo $unread_count; ?></span>
-                <?php endif; ?>
-            </a>
-            <a href="profile.php" title="Profile">
-                <?php echo get_user_avatar_html($user, 'sm'); ?>
-            </a>
-        </div>
-    </div>
+    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'orders'); ?>
+    <?php echo render_user_sidebar('orders'); ?>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="user_dashboard.php" class="<?php echo strpos($_SERVER['PHP_SELF'], 'user_dashboard') !== false ? 'active' : ''; ?>">
-            <i class="fas fa-home"></i> Home
-        </a>
-        <a href="orders_new.php" class="<?php echo strpos($_SERVER['PHP_SELF'], 'orders_new') !== false ? 'active' : ''; ?>">
-            <i class="fas fa-shopping-bag"></i> My Orders
-        </a>
-        <a href="profile.php" class="<?php echo strpos($_SERVER['PHP_SELF'], 'profile') !== false ? 'active' : ''; ?>">
-            <i class="fas fa-user"></i> Profile
-        </a>
-        <a href="logout.php">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-
-    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
             <h1>

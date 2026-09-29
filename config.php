@@ -33,6 +33,64 @@ if ($conn === false) {
 // Set charset to utf8mb4 for better security and emoji support
 mysqli_set_charset($conn, "utf8mb4");
 
+function ensure_announcements_table($conn) {
+    $table_sql = "CREATE TABLE IF NOT EXISTS announcements (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        image VARCHAR(255) NULL,
+        announcement_type VARCHAR(50) NOT NULL DEFAULT 'General',
+        priority VARCHAR(20) NOT NULL DEFAULT 'Normal',
+        status VARCHAR(20) NOT NULL DEFAULT 'published',
+        is_active TINYINT(1) NOT NULL DEFAULT 1,
+        created_by INT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        start_at DATETIME NULL,
+        expires_at DATETIME NULL,
+        published_at DATETIME NULL,
+        INDEX idx_status (status),
+        INDEX idx_type (announcement_type),
+        INDEX idx_priority (priority),
+        INDEX idx_dates (start_at, expires_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+
+    if (!mysqli_query($conn, $table_sql)) {
+        return false;
+    }
+
+    $columns = [
+        ['image', "ALTER TABLE announcements ADD COLUMN image VARCHAR(255) NULL AFTER message"],
+        ['announcement_type', "ALTER TABLE announcements ADD COLUMN announcement_type VARCHAR(50) NOT NULL DEFAULT 'General' AFTER image"],
+        ['priority', "ALTER TABLE announcements ADD COLUMN priority VARCHAR(20) NOT NULL DEFAULT 'Normal' AFTER announcement_type"],
+        ['status', "ALTER TABLE announcements ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'published' AFTER priority"],
+        ['is_active', "ALTER TABLE announcements ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1 AFTER status"],
+        ['created_by', "ALTER TABLE announcements ADD COLUMN created_by INT NULL AFTER is_active"],
+        ['start_at', "ALTER TABLE announcements ADD COLUMN start_at DATETIME NULL AFTER updated_at"],
+        ['expires_at', "ALTER TABLE announcements ADD COLUMN expires_at DATETIME NULL AFTER start_at"],
+        ['published_at', "ALTER TABLE announcements ADD COLUMN published_at DATETIME NULL AFTER expires_at"]
+    ];
+
+    foreach ($columns as $column) {
+        [$name, $alter_sql] = $column;
+        $check = mysqli_query($conn, "SHOW COLUMNS FROM announcements LIKE '" . mysqli_real_escape_string($conn, $name) . "'");
+        if ($check && mysqli_num_rows($check) === 0) {
+            mysqli_query($conn, $alter_sql);
+        }
+    }
+
+    $check = mysqli_query($conn, "SELECT id FROM announcements LIMIT 1");
+    if ($check && mysqli_num_rows($check) === 0) {
+        mysqli_query($conn, "INSERT INTO announcements (title, message, announcement_type, priority, status, is_active, start_at, expires_at) VALUES
+            ('Welcome to Bazario', 'Thank you for shopping with Bazario. Explore our latest mobile accessories and enjoy great offers.', 'General', 'Important', 'published', 1, NOW(), NULL),
+            ('New Arrivals', 'Fresh accessories and premium mobile gear are now available in stock. Check them out today!', 'New Product', 'Normal', 'published', 1, NOW(), NULL)");
+    }
+
+    return true;
+}
+
+ensure_announcements_table($conn);
+
 // OTP configuration
 if (!defined('OTP_EXPIRY_MINUTES')) {
     define('OTP_EXPIRY_MINUTES', 30); // OTP validity in minutes

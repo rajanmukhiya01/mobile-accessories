@@ -1,31 +1,25 @@
 <?php
-function render_user_navbar($user, $unread_count = 0, $class = 'navbar-top', $brand_text = 'Mobile Accessories', $show_menu = false, $active_page = 'dashboard'): string
+function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_text = 'BAZARIO', $show_menu = false, $active_page = 'dashboard'): string
 {
-    $badge = $unread_count > 0 ? '<span class="notification-badge">' . (int) $unread_count . '</span>' : '';
+    $badge = $unread_count > 0 ? '<span style="position: absolute; top: -6px; right: -10px; background: #e74c3c; color: white; font-size: 11px; padding: 2px 6px; border-radius: 12px;">' . (int) $unread_count . '</span>' : '';
     $avatar = function_exists('get_user_avatar_html') ? get_user_avatar_html($user, 'sm') : '';
+    $nav_class = $class === 'navbar-top' ? 'navbar' : $class;
 
-    $menu_html = '';
-    if ($show_menu) {
-        $menu_items = [
-            ['dashboard', 'user_dashboard.php', 'Dashboard'],
-            ['shop', 'user_dashboard.php', 'Shop'],
-            ['orders', 'orders_new.php', 'My Orders'],
-        ];
-
-        foreach ($menu_items as $item) {
-            [$key, $href, $label] = $item;
-            $active = $active_page === $key ? ' active' : '';
-            $menu_html .= '<li><a href="' . htmlspecialchars($href) . '" class="' . $active . '">' . htmlspecialchars($label) . '</a></li>';
-        }
-    }
-
-    return '<div class="' . htmlspecialchars($class) . '" role="banner">'
-        . '<div class="navbar-brand-text"><i class="fas fa-shopping-bag"></i> ' . htmlspecialchars($brand_text) . '</div>'
-        . ($show_menu ? '<ul class="nav-menu">' . $menu_html . '</ul>' : '')
-        . '<div class="navbar-icons">'
-        . '<a href="notifications.php" title="Notifications"><i class="fas fa-bell"></i>' . $badge . '</a>'
-        . '<a href="profile.php" title="Profile">' . $avatar . '</a>'
-        . '</div></div>';
+    return '<div class="' . htmlspecialchars($nav_class) . '" role="banner">'
+        . '<div style="display: flex; align-items: center; gap: 15px; width: 100%;">'
+        . '<i class="fas fa-shopping-bag" style="font-size: 28px;"></i>'
+        . '<span class="navbar-brand" style="margin: 0;">' . htmlspecialchars($brand_text) . '</span>'
+        . '<span style="opacity: 0.9; font-size: 12px; margin-left: 12px;">Online Shopping Store</span>'
+        . '<div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">'
+        . '<div style="position: relative;">'
+        . '<a href="notifications.php" style="color: white; text-decoration: none; position: relative;">'
+        . '<i class="fas fa-bell" style="font-size: 18px;"></i>' . $badge
+        . '</a>'
+        . '</div>'
+        . '<a href="profile.php" style="color: white; text-decoration: none; display: flex; align-items: center;">' . $avatar . '</a>'
+        . '</div>'
+        . '</div>'
+        . '</div>';
 }
 
 function render_user_sidebar($active_page = 'dashboard'): string
@@ -33,7 +27,9 @@ function render_user_sidebar($active_page = 'dashboard'): string
     $items = [
         ['dashboard', 'user_dashboard.php', 'fas fa-home', 'Dashboard'],
         ['shop', 'user_dashboard.php', 'fas fa-store', 'Shop'],
+        ['announcements', 'announcements.php', 'fas fa-bullhorn', 'Announcements'],
         ['orders', 'orders_new.php', 'fas fa-shopping-bag', 'My Orders'],
+        ['notifications', 'notifications.php', 'fas fa-bell', 'Notifications'],
         ['profile', 'profile.php', 'fas fa-user', 'Profile'],
     ];
 

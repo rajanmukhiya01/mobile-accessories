@@ -281,143 +281,43 @@ mysqli_close($conn);
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-            .navbar-top {
+
+        .navbar,
+        .navbar-top {
             background: linear-gradient(135deg, #001a33 0%, #003366 100%);
             color: white;
-            padding: 15px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 1100;
+            width: 100%;
             min-height: 64px;
-        }
-
-        .navbar-brand-text {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-
-        .nav-menu li {
-            list-style: none;
-        }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            color: #ffd700;
-        }
-
-        .navbar-icons {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .navbar-icons a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            position: relative;
-        }
-
-        .navbar-icons a:hover {
-            color: #ffd700;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -7px;
-            right: -8px;
-            background: #ff5a5f;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        @media (max-width: 768px) {
-            .navbar-top {
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-
-            .nav-menu {
-                gap: 12px;
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .navbar-icons {
-                margin-left: auto;
-                width: auto;
-            }
         }
 
         .container-main {
             display: flex;
             min-height: calc(100vh - 70px);
         }
-        
+
         .sidebar {
             width: 250px;
-            background: #2c3e50;
+            background: #001a33;
             padding: 20px 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             position: fixed;
-            height: calc(100vh - 70px);
+            top: 64px;
+            left: 0;
+            height: calc(100vh - 64px);
+            z-index: 900;
             overflow-y: auto;
         }
-        
-        .sidebar a, .sidebar button {
-            display: block;
-            width: 100%;
-            color: #ecf0f1;
-            padding: 15px 20px;
-            text-decoration: none;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-            border: none;
-            background: none;
-            text-align: left;
-            cursor: pointer;
-            font-size: 15px;
-        }
-        
-        .sidebar a:hover, .sidebar button:hover {
-            background: #34495e;
-            border-left-color: #667eea;
-            padding-left: 30px;
-        }
-        
-        .sidebar a i, .sidebar button i {
-            margin-right: 10px;
-            width: 20px;
-        }
-        
+
+        .sidebar a,
+        .sidebar button,
         .sidebar-logout-btn {
             display: block;
             width: 100%;
@@ -432,18 +332,24 @@ mysqli_close($conn);
             cursor: pointer;
             font-size: 15px;
         }
-        
-        .sidebar-logout-btn:hover {
-            background: #34495e;
-            border-left-color: #dc3545;
+
+        .sidebar a:hover,
+        .sidebar button:hover,
+        .sidebar-logout-btn:hover,
+        .sidebar a.active {
+            background: #003366;
+            border-left-color: #3498db;
             padding-left: 30px;
+            color: #fff;
         }
-        
+
+        .sidebar a i,
+        .sidebar button i,
         .sidebar-logout-btn i {
             margin-right: 10px;
             width: 20px;
         }
-        
+
         .content {
             margin-left: 250px;
             padding: 30px;

@@ -60,7 +60,30 @@ if (mysqli_num_rows($user_check) == 0) {
     $status[] = "✓ Test user role confirmed";
 }
 
-// 4. Verify database structure
+// 4. Ensure announcements system table exists
+$status[] = "Checking announcements table...";
+$announcement_sql = "CREATE TABLE IF NOT EXISTS announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)";
+if (mysqli_query($conn, $announcement_sql)) {
+    $status[] = "✓ Announcements table ready";
+    $check_announcement_rows = mysqli_query($conn, "SELECT id FROM announcements LIMIT 1");
+    if (mysqli_num_rows($check_announcement_rows) == 0) {
+        mysqli_query($conn, "INSERT INTO announcements (title, message, is_active) VALUES
+            ('Welcome to Bazario', 'Thank you for shopping with Bazario. Explore our latest mobile accessories and enjoy great offers.', 1),
+            ('New Arrivals', 'Fresh accessories and premium mobile gear are now available in stock. Check them out today!', 1)");
+        $status[] = "✓ Seeded demo announcements";
+    }
+} else {
+    $status[] = "✗ Error creating announcements table: " . mysqli_error($conn);
+}
+
+// 5. Verify database structure
 $status[] = "\n=== Database Verification ===";
 $users_result = mysqli_query($conn, "SELECT COUNT(*) as count FROM users");
 $users_row = mysqli_fetch_assoc($users_result);
