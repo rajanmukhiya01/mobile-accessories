@@ -64,7 +64,44 @@ function mark_all_read($conn, $user_id) {
     return $result;
 }
 
+function ensure_notification_preferences_table($conn) {
+    static $table_ready = false;
+    if ($table_ready) {
+        return true;
+    }
+
+    $sql = "CREATE TABLE IF NOT EXISTS notification_preferences (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL UNIQUE,
+        email_on_order_placed TINYINT(1) DEFAULT 1,
+        email_on_processing TINYINT(1) DEFAULT 1,
+        email_on_packing TINYINT(1) DEFAULT 1,
+        email_on_out_for_delivery TINYINT(1) DEFAULT 1,
+        email_on_delivered TINYINT(1) DEFAULT 1,
+        sms_on_order_placed TINYINT(1) DEFAULT 0,
+        sms_on_processing TINYINT(1) DEFAULT 1,
+        sms_on_packing TINYINT(1) DEFAULT 0,
+        sms_on_out_for_delivery TINYINT(1) DEFAULT 1,
+        sms_on_delivered TINYINT(1) DEFAULT 1,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_user_id (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+
+    try {
+        $table_ready = mysqli_query($conn, $sql);
+    } catch (mysqli_sql_exception $exception) {
+        return false;
+    }
+
+    return $table_ready;
+}
+
 function get_notification_preferences($conn, $user_id) {
+    if (!ensure_notification_preferences_table($conn)) {
+        return false;
+    }
+
     $sql = "SELECT * FROM notification_preferences WHERE user_id = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
@@ -79,6 +116,10 @@ function get_notification_preferences($conn, $user_id) {
 }
 
 function create_default_preferences($conn, $user_id) {
+    if (!ensure_notification_preferences_table($conn)) {
+        return false;
+    }
+
     $sql = "INSERT IGNORE INTO notification_preferences (user_id) VALUES (?)";
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
@@ -91,6 +132,10 @@ function create_default_preferences($conn, $user_id) {
 }
 
 function update_notification_preferences($conn, $user_id, $preferences) {
+    if (!ensure_notification_preferences_table($conn) || !create_default_preferences($conn, $user_id)) {
+        return false;
+    }
+
     $defaults = [
         'email_on_order_placed' => 0,
         'email_on_processing' => 0,
@@ -130,7 +175,7 @@ function update_notification_preferences($conn, $user_id, $preferences) {
 
     mysqli_stmt_bind_param(
         $stmt,
-        'iiiiiiiii i',
+        'iiiiiiiiiii',
         $values['email_on_order_placed'],
         $values['email_on_processing'],
         $values['email_on_packing'],
