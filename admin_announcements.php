@@ -182,6 +182,7 @@ if ($res) {
         .table td, .table th { vertical-align: middle; }
         @media (max-width: 768px) { .container-main { display: block; } .sidebar { position: static; width: 100%; height: auto; } .content { margin-left: 0; padding: 20px; } }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <div class="navbar">

@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     <title>Login - Bazario Mobile Accessories</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css?v=3">
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body class="login-page">

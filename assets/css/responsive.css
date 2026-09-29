@@ -1,0 +1,268 @@
+/* Shared responsive adjustments for server-rendered pages. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    max-width: 100%;
+}
+
+body {
+    min-width: 320px;
+}
+
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+.container,
+.container-fluid,
+.container-main,
+.content,
+.main-content,
+.content-wrapper,
+.settings-container,
+.checkout-container {
+    min-width: 0;
+}
+
+.table-responsive,
+.orders-table {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    max-width: 100%;
+}
+
+button,
+.btn,
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .content,
+    .main-content,
+    .content-wrapper {
+        padding: 24px;
+    }
+
+    .settings-container,
+    .checkout-container {
+        margin: 24px auto;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-main {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 16px;
+    }
+
+    .sidebar,
+    .container-main > .sidebar {
+        position: static !important;
+        inset: auto !important;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none;
+        overflow: visible;
+        padding: 8px;
+        z-index: auto;
+    }
+
+    .sidebar a,
+    .sidebar button,
+    .sidebar .sidebar-logout-btn {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        min-height: 44px;
+        width: auto;
+        padding: 10px 12px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .sidebar .user-info,
+    .sidebar form {
+        grid-column: 1 / -1;
+    }
+
+    .content,
+    .main-content,
+    .content-wrapper {
+        width: 100% !important;
+        max-width: none;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    .navbar,
+    .navbar-top,
+    .header {
+        min-height: 0;
+        padding: 12px 16px !important;
+    }
+
+    .navbar > div,
+    .navbar-top > div,
+    .section-title,
+    .page-header,
+    .order-header {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .section-title,
+    .page-header,
+    .order-header {
+        align-items: flex-start;
+    }
+
+    .products-grid,
+    .product-grid,
+    .orders-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .welcome-section {
+        margin: 16px !important;
+        padding: 20px !important;
+    }
+
+    .products-section {
+        padding: 20px !important;
+    }
+
+    .checkout-container,
+    .settings-container {
+        width: calc(100% - 32px);
+        max-width: 900px;
+        margin: 16px auto !important;
+        padding: 24px 20px !important;
+    }
+
+    .filter-row input,
+    .filter-row select,
+    .filter-row button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .orders-table {
+        overflow-x: auto !important;
+    }
+
+    #notif-dropdown {
+        left: auto !important;
+        right: 0 !important;
+        width: min(320px, calc(100vw - 24px)) !important;
+    }
+
+    .modal-dialog {
+        max-width: calc(100vw - 24px);
+        margin: 12px auto;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-picture-section,
+    .profile-picture-info {
+        min-width: 0;
+    }
+
+    .profile-picture-info {
+        overflow-wrap: anywhere;
+    }
+
+    .profile-picture-info .btn {
+        min-width: 0;
+        flex: 0 1 auto;
+    }
+
+    .content,
+    .main-content,
+    .content-wrapper {
+        padding: 16px !important;
+    }
+
+    .sidebar {
+        gap: 2px;
+        padding: 6px;
+    }
+
+    .sidebar a,
+    .sidebar button,
+    .sidebar .sidebar-logout-btn {
+        padding: 10px 8px !important;
+        font-size: 14px;
+    }
+
+    .products-grid,
+    .product-grid,
+    .orders-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .welcome-section,
+    .products-section {
+        margin: 12px !important;
+        padding: 16px !important;
+    }
+
+    .checkout-container,
+    .settings-container {
+        width: calc(100% - 24px);
+        margin: 12px auto !important;
+        padding: 20px 16px !important;
+    }
+
+    .summary-row,
+    .order-details-row,
+    .item-row {
+        flex-wrap: wrap;
+    }
+
+    .summary-label,
+    .order-details-label,
+    .order-details-value {
+        min-width: 0;
+        text-align: left;
+    }
+
+    .page-header h1,
+    .section-title {
+        font-size: 24px;
+    }
+
+    button,
+    .btn,
+    input,
+    select {
+        min-height: 44px;
+    }
+}

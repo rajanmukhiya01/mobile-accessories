@@ -701,6 +701,7 @@ mysqli_close($conn);
         }
 
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <?php if ($is_admin): ?>

@@ -561,6 +561,7 @@ $orders_result = mysqli_stmt_get_result($stmt);
             border: 1px solid #f5c6cb;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <?php if ($is_admin): ?>

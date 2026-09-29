@@ -464,6 +464,7 @@ $total_orders = array_sum($status_counts);
             border: 2px solid #e0e0e0;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'orders'); ?>

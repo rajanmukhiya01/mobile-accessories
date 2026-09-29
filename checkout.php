@@ -334,6 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-shadow: 0 0 0 0.2rem rgba(0, 26, 51, 0.25);
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <div class="checkout-container">

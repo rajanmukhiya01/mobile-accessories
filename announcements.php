@@ -164,6 +164,7 @@ if ($conn) {
             .content { margin-left: 0; padding: 20px; }
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'announcements'); ?>

@@ -587,6 +587,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <!-- Navigation Bar -->

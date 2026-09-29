@@ -291,6 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-left: 10px;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <div class="header">

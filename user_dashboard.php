@@ -447,6 +447,7 @@ while ($row = $result->fetch_assoc()) {
             }
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <!-- Header -->

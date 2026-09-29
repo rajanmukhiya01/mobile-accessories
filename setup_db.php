@@ -234,6 +234,7 @@ $success = true;
             color: #667eea;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <div class="setup-container">

@@ -123,6 +123,7 @@ mysqli_close($conn);
     <title>Register - Mobile Accessories</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css?v=2">
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body class="login-page">
     <div class="login-container">

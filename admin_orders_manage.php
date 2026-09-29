@@ -385,6 +385,7 @@ $all_statuses = ['Order Placed', 'Confirmed', 'Processing', 'Packing', 'Out for 
             border: 2px solid #e0e0e0;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <!-- Navbar -->

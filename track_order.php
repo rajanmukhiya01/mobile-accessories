@@ -253,6 +253,7 @@ if ($stmt_last) {
         @media (max-width: 992px) { .sidebar { display:none; } .main-content { margin-left:0; padding:16px; } }
         @media (max-width: 768px) { .timeline { flex-direction:column; } .timeline-step { min-width:auto; } }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <?php echo render_user_navbar($current_user, $unread_count, 'navbar', 'BAZARIO', false, 'orders'); ?>

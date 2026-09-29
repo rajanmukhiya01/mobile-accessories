@@ -23,6 +23,7 @@ mysqli_stmt_close($stmt);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>OTP Verification Logs</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body class="p-4">
     <div class="container">

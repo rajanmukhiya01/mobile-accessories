@@ -265,6 +265,7 @@ while ($row = $result->fetch_assoc()) {
             opacity: 0.5;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
     <div class="navbar">
