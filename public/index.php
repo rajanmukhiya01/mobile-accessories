@@ -19,8 +19,8 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     exit;
 }
 
-// Not logged in, redirect to login page
-header("Location: ../pages/login.php");
+// Not logged in, redirect to the existing login page
+header("Location: ../minor.php");
 exit;
 ?>
 

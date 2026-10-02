@@ -76,6 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['image'];
             $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            $upload_dir = __DIR__ . '/uploads/announcements';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0775, true);
+            }
+
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo, $file['tmp_name']);
             finfo_close($finfo);
@@ -87,12 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $safe_name = uniqid('ann_', true) . '.' . strtolower($ext);
-                $target = 'uploads/announcements/' . $safe_name;
+                $target = $upload_dir . '/' . $safe_name;
                 if (move_uploaded_file($file['tmp_name'], $target)) {
-                    if ($remove_image !== true && $existing_image && file_exists($existing_image) && $existing_image !== $target) {
+                    $relative_target = 'uploads/announcements/' . $safe_name;
+                    if ($remove_image !== true && $existing_image && file_exists($existing_image) && $existing_image !== $relative_target) {
                         @unlink($existing_image);
                     }
-                    $image_path = $target;
+                    $image_path = $relative_target;
                 } else {
                     $error_msg = 'Image upload failed.';
                 }
@@ -118,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conn->prepare('INSERT INTO announcements (title, message, image, announcement_type, priority, status, is_active, created_by, start_at, expires_at, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
                 if ($stmt) {
                     $active = ($status === 'published') ? 1 : 0;
-                    $stmt->bind_param('ssssssiiiss', $title, $message, $image_path, $type, $priority, $status, $active, $admin_id, $start_at, $expires_at);
+                    $stmt->bind_param('ssssssiiss', $title, $message, $image_path, $type, $priority, $status, $active, $admin_id, $start_at, $expires_at);
                     $stmt->execute();
                     $stmt->close();
                     $success_msg = 'Announcement created successfully.';

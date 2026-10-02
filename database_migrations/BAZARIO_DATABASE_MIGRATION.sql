@@ -111,6 +111,28 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Step 11: Create announcements table used by admin announcement management and the user panel
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    image VARCHAR(255) NULL,
+    announcement_type VARCHAR(50) NOT NULL DEFAULT 'General',
+    priority VARCHAR(20) NOT NULL DEFAULT 'Normal',
+    status VARCHAR(20) NOT NULL DEFAULT 'published',
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    start_at DATETIME NULL,
+    expires_at DATETIME NULL,
+    published_at DATETIME NULL,
+    INDEX idx_status (status),
+    INDEX idx_type (announcement_type),
+    INDEX idx_priority (priority),
+    INDEX idx_dates (start_at, expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- ============================================
 -- PHASE 4: DATA MIGRATION & INITIALIZATION
 -- ============================================

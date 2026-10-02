@@ -105,14 +105,16 @@ if (!defined('OTP_ENC_KEY')) {
         define('OTP_ENC_KEY', 'please_change_this_to_a_secure_random_key');
     }
 }
-/**
- * Helper function to sanitize input
- */
-function sanitize_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+if (!function_exists('sanitize_input')) {
+    /**
+     * Helper function to sanitize input
+     */
+    function sanitize_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
 }
 
 /**

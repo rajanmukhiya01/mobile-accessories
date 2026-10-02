@@ -287,6 +287,9 @@ while ($row = $result->fetch_assoc()) {
             <a href="admin_orders_manage.php">
                 <i class="fas fa-shopping-bag"></i> Orders Management
             </a>
+            <a href="admin_announcements.php">
+                <i class="fas fa-bullhorn"></i> Announcements
+            </a>
             <a href="admin_profile.php">
                 <i class="fas fa-user-circle"></i> Admin Profile
             </a>
