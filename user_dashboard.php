@@ -67,17 +67,118 @@ if (isset($_GET['check_updates']) && $_GET['check_updates'] == 1) {
 // Get notifications
 $recent_notifications = get_user_notifications($conn, $user_id, 5, 0);
 
-// Fetch all products
-$sql = "SELECT * FROM product ORDER BY id DESC";
-$result = $conn->query($sql);
+function build_user_dashboard_url(array $updates = []): string {
+    $query = $_GET;
+    foreach ($updates as $key => $value) {
+        if ($value === null || $value === '') {
+            unset($query[$key]);
+        } else {
+            $query[$key] = $value;
+        }
+    }
 
-if (!$result) {
-    die("Database query failed: " . $conn->error);
+    $url = 'user_dashboard.php';dsaq    
+    if (!empty($query)) {
+        $url .= '?' . http_build_query($query);
+    }
+
+    return $url;
 }
 
+$search_term = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+$selected_category = isset($_GET['category']) ? trim((string) $_GET['category']) : '';
+$selected_availability = isset($_GET['availability']) ? (string) $_GET['availability'] : 'all';
+$selected_availability = in_array($selected_availability, ['all', 'in_stock', 'out_of_stock'], true) ? $selected_availability : 'all';
+$min_price = isset($_GET['min_price']) ? trim((string) $_GET['min_price']) : '';
+$max_price = isset($_GET['max_price']) ? trim((string) $_GET['max_price']) : '';
+$sort_option = isset($_GET['sort']) ? (string) $_GET['sort'] : 'default';
+$sort_option = in_array($sort_option, ['default', 'price_asc', 'price_desc', 'newest', 'name_asc'], true) ? $sort_option : 'default';
+
+$category_query = $conn->query("SELECT DISTINCT category FROM product WHERE category IS NOT NULL AND category <> '' ORDER BY category ASC");
+$category_options = [];
+if ($category_query) {
+    while ($category_row = $category_query->fetch_assoc()) {
+        $value = trim((string) ($category_row['category'] ?? ''));
+        if ($value !== '') {
+            $category_options[] = $value;
+        }
+    }
+}
+
+$where_clauses = [];
+$binding_values = [];
+$binding_types = '';
+
+if ($search_term !== '') {
+    $like_term = '%' . $search_term . '%';
+    $where_clauses[] = '(name LIKE ? OR category LIKE ? OR description LIKE ?)';
+    $binding_values[] = $like_term;
+    $binding_values[] = $like_term;
+    $binding_values[] = $like_term;
+    $binding_types .= 'sss';
+}
+
+if ($selected_category !== '') {
+    $where_clauses[] = 'category = ?';
+    $binding_values[] = $selected_category;
+    $binding_types .= 's';
+}
+
+if ($min_price !== '' && is_numeric($min_price)) {
+    $where_clauses[] = 'price >= ?';
+    $binding_values[] = (float) $min_price;
+    $binding_types .= 'd';
+}
+
+if ($max_price !== '' && is_numeric($max_price)) {
+    $where_clauses[] = 'price <= ?';
+    $binding_values[] = (float) $max_price;
+    $binding_types .= 'd';
+}
+
+if ($selected_availability === 'in_stock') {
+    $where_clauses[] = 'quantity > 0';
+} elseif ($selected_availability === 'out_of_stock') {
+    $where_clauses[] = 'quantity <= 0';
+}
+
+$sort_clause = 'ORDER BY id DESC';
+if ($sort_option === 'price_asc') {
+    $sort_clause = 'ORDER BY price ASC, id DESC';
+} elseif ($sort_option === 'price_desc') {
+    $sort_clause = 'ORDER BY price DESC, id DESC';
+} elseif ($sort_option === 'newest') {
+    $sort_clause = 'ORDER BY id DESC';
+} elseif ($sort_option === 'name_asc') {
+    $sort_clause = 'ORDER BY name ASC, id DESC';
+}
+
+$sql = 'SELECT * FROM product';
+if (!empty($where_clauses)) {
+    $sql .= ' WHERE ' . implode(' AND ', $where_clauses);
+}
+$sql .= ' ' . $sort_clause;
+
+$stmt = $conn->prepare($sql);
 $products = [];
-while ($row = $result->fetch_assoc()) {
-    $products[] = $row;
+
+if ($stmt) {
+    if (!empty($binding_values)) {
+        $stmt->bind_param($binding_types, ...$binding_values);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $products[] = $row;
+    }
+    $stmt->close();
+} else {
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
 }
 ?>
 
@@ -395,6 +496,188 @@ while ($row = $result->fetch_assoc()) {
             font-size: 24px;
             margin-bottom: 10px;
         }
+
+        .product-toolbar {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #eaeaea;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .product-search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            flex: 1 1 320px;
+        }
+
+        .search-input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7b7b7b;
+        }
+
+        .search-input-wrap input {
+            width: 100%;
+            border: 1px solid #dfe4ea;
+            border-radius: 10px;
+            padding: 12px 14px 12px 42px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-input-wrap input:focus {
+            border-color: #001a33;
+            box-shadow: 0 0 0 3px rgba(0, 26, 51, 0.08);
+        }
+
+        .toolbar-btn,
+        .filter-toggle,
+        .clear-filters-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .toolbar-btn,
+        .filter-toggle {
+            background: #001a33;
+            color: white;
+        }
+
+        .clear-filters-btn {
+            background: #eef2f7;
+            color: #24364d;
+        }
+
+        .toolbar-btn:hover,
+        .filter-toggle:hover,
+        .clear-filters-btn:hover {
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        .filter-panel {
+            display: none;
+            border-top: 1px solid #edf1f4;
+            padding-top: 18px;
+            margin-top: 6px;
+        }
+
+        .filter-panel.visible {
+            display: block;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4c5d76;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .filter-field select,
+        .filter-field input {
+            width: 100%;
+            border: 1px solid #dfe4ea;
+            border-radius: 9px;
+            padding: 10px 12px;
+            background: white;
+            color: #1b2430;
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .active-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .active-filter-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #eef5ff;
+            color: #003366;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .active-filter-pill a {
+            color: #003366;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .results-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .results-count {
+            font-size: 15px;
+            color: #49566b;
+            font-weight: 600;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            color: #4c5d76;
+        }
         
         /* Avatar Styles */
         .avatar-sm { width: 32px; height: 32px; }
@@ -537,6 +820,115 @@ while ($row = $result->fetch_assoc()) {
     <!-- Products Section -->
     <div class="products-section">
         <h2 class="section-header"><i class="fas fa-shopping-bag"></i> Featured Products</h2>
+
+        <div class="product-toolbar">
+            <form method="GET" class="product-search-form" id="productSearchForm">
+                <div class="search-row">
+                    <div class="search-input-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="q" value="<?php echo htmlspecialchars($search_term); ?>" placeholder="Search products..." aria-label="Search products">
+                    </div>
+                    <button type="submit" class="toolbar-btn"><i class="fas fa-search"></i> Search</button>
+                    <a href="user_dashboard.php" class="clear-filters-btn"><i class="fas fa-times"></i> Clear</a>
+                    <button type="button" class="filter-toggle" id="filterToggle"><i class="fas fa-sliders-h"></i> Filters</button>
+                </div>
+
+                <div class="filter-panel <?php echo ($search_term !== '' || $selected_category !== '' || $min_price !== '' || $max_price !== '' || $selected_availability !== 'all' || $sort_option !== 'default') ? 'visible' : ''; ?>" id="filterPanel">
+                    <div class="filter-grid">
+                        <div class="filter-field">
+                            <label for="categoryFilter">Category</label>
+                            <select id="categoryFilter" name="category">
+                                <option value="">All Categories</option>
+                                <?php foreach ($category_options as $category): ?>
+                                    <option value="<?php echo htmlspecialchars($category); ?>" <?php echo $selected_category === $category ? 'selected' : ''; ?>><?php echo htmlspecialchars($category); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label for="availabilityFilter">Availability</label>
+                            <select id="availabilityFilter" name="availability">
+                                <option value="all" <?php echo $selected_availability === 'all' ? 'selected' : ''; ?>>All</option>
+                                <option value="in_stock" <?php echo $selected_availability === 'in_stock' ? 'selected' : ''; ?>>In Stock</option>
+                                <option value="out_of_stock" <?php echo $selected_availability === 'out_of_stock' ? 'selected' : ''; ?>>Out of Stock</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label for="minPrice">Min Price</label>
+                            <input type="number" id="minPrice" name="min_price" min="0" step="1" value="<?php echo htmlspecialchars($min_price); ?>" placeholder="0">
+                        </div>
+
+                        <div class="filter-field">
+                            <label for="maxPrice">Max Price</label>
+                            <input type="number" id="maxPrice" name="max_price" min="0" step="1" value="<?php echo htmlspecialchars($max_price); ?>" placeholder="5000">
+                        </div>
+
+                        <div class="filter-field">
+                            <label for="sortFilter">Sort By</label>
+                            <select id="sortFilter" name="sort">
+                                <option value="default" <?php echo $sort_option === 'default' ? 'selected' : ''; ?>>Default</option>
+                                <option value="price_asc" <?php echo $sort_option === 'price_asc' ? 'selected' : ''; ?>>Price: Low to High</option>
+                                <option value="price_desc" <?php echo $sort_option === 'price_desc' ? 'selected' : ''; ?>>Price: High to Low</option>
+                                <option value="newest" <?php echo $sort_option === 'newest' ? 'selected' : ''; ?>>Newest</option>
+                                <option value="name_asc" <?php echo $sort_option === 'name_asc' ? 'selected' : ''; ?>>Name: A to Z</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="toolbar-btn"><i class="fas fa-check"></i> Apply Filters</button>
+                        <a href="user_dashboard.php" class="clear-filters-btn"><i class="fas fa-redo"></i> Clear All Filters</a>
+                    </div>
+                </div>
+            </form>
+
+            <?php
+            $active_filters = [];
+            if ($search_term !== '') {
+                $active_filters[] = ['label' => 'Search: ' . $search_term, 'url' => build_user_dashboard_url(['q' => null])];
+            }
+            if ($selected_category !== '') {
+                $active_filters[] = ['label' => 'Category: ' . $selected_category, 'url' => build_user_dashboard_url(['category' => null])];
+            }
+            if ($selected_availability !== 'all') {
+                $active_filters[] = ['label' => 'Availability: ' . ($selected_availability === 'in_stock' ? 'In Stock' : 'Out of Stock'), 'url' => build_user_dashboard_url(['availability' => null])];
+            }
+            if ($min_price !== '') {
+                $active_filters[] = ['label' => 'Min: ₹' . number_format((float) $min_price, 2), 'url' => build_user_dashboard_url(['min_price' => null])];
+            }
+            if ($max_price !== '') {
+                $active_filters[] = ['label' => 'Max: ₹' . number_format((float) $max_price, 2), 'url' => build_user_dashboard_url(['max_price' => null])];
+            }
+            if ($sort_option !== 'default') {
+                $sort_label = 'Sort: Default';
+                if ($sort_option === 'price_asc') { $sort_label = 'Sort: Price: Low to High'; }
+                if ($sort_option === 'price_desc') { $sort_label = 'Sort: Price: High to Low'; }
+                if ($sort_option === 'newest') { $sort_label = 'Sort: Newest'; }
+                if ($sort_option === 'name_asc') { $sort_label = 'Sort: Name: A to Z'; }
+                $active_filters[] = ['label' => $sort_label, 'url' => build_user_dashboard_url(['sort' => null])];
+            }
+            ?>
+
+            <?php if (!empty($active_filters)): ?>
+                <div class="active-filter-bar">
+                    <strong style="font-size: 13px; color: #4c5d76;">Active filters:</strong>
+                    <?php foreach ($active_filters as $filter): ?>
+                        <span class="active-filter-pill">
+                            <?php echo htmlspecialchars($filter['label']); ?>
+                            <a href="<?php echo htmlspecialchars($filter['url']); ?>" aria-label="Remove <?php echo htmlspecialchars($filter['label']); ?>">×</a>
+                        </span>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="results-summary">
+            <div class="results-count"><?php echo count($products); ?> product<?php echo count($products) === 1 ? '' : 's'; ?> found</div>
+            <?php if (!empty($search_term) || $selected_category !== '' || $selected_availability !== 'all' || $min_price !== '' || $max_price !== ''): ?>
+                <a href="user_dashboard.php" class="clear-filters-btn"><i class="fas fa-times"></i> Clear Search & Filters</a>
+            <?php endif; ?>
+        </div>
         
         <?php if (count($products) > 0): ?>
             <div class="products-grid">
@@ -581,10 +973,11 @@ while ($row = $result->fetch_assoc()) {
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <div class="empty-state">
-                <i class="fas fa-box"></i>
-                <h3>No Products Available</h3>
-                <p>No products available at the moment. Please check back later!</p>
+            <div class="no-results">
+                <i class="fas fa-search fa-3x" style="margin-bottom: 12px; opacity: 0.7;"></i>
+                <h3 style="margin-bottom: 8px;">No products found matching your search.</h3>
+                <p style="margin-bottom: 18px;">Try a different keyword or clear the filters.</p>
+                <a href="user_dashboard.php" class="clear-filters-btn"><i class="fas fa-times"></i> Clear Search & Filters</a>
             </div>
         <?php endif; ?>
     </div>
@@ -619,6 +1012,15 @@ while ($row = $result->fetch_assoc()) {
                 }
             })
             .catch(error => console.log('Shop update check error:', error));
+        }
+
+        const filterToggle = document.getElementById('filterToggle');
+        const filterPanel = document.getElementById('filterPanel');
+
+        if (filterToggle && filterPanel) {
+            filterToggle.addEventListener('click', function() {
+                filterPanel.classList.toggle('visible');
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
