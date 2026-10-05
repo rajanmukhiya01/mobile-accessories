@@ -167,7 +167,7 @@ if ($conn) {
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'announcements'); ?>
+    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'announcements', false); ?>
     <div class="container-main">
         <?php echo render_user_sidebar('announcements'); ?>
         <div class="content">

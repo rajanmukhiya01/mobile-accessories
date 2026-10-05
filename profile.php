@@ -174,62 +174,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Handle profile picture upload (for both file and camera)
     if (isset($_POST['upload_picture'])) {
-        // Debug logging
-        error_log("=== PROFILE PICTURE UPLOAD ===");
-        error_log("POST data: " . json_encode($_POST));
-        error_log("FILES keys: " . json_encode(array_keys($_FILES)));
-        
-        // Check if file exists in $_FILES
-        if (isset($_FILES['profile_picture']) && !empty($_FILES['profile_picture']['tmp_name'])) {
-            error_log("File found in FILES: " . $_FILES['profile_picture']['name']);
-            error_log("File size: " . $_FILES['profile_picture']['size']);
-            error_log("File type: " . $_FILES['profile_picture']['type']);
-            error_log("File tmp: " . $_FILES['profile_picture']['tmp_name']);
-            
-            $upload_result = upload_profile_picture($conn, $user_id, $_FILES['profile_picture']);
-            error_log("Upload result: " . json_encode($upload_result));
-            
-            if ($upload_result['success']) {
-                $success_msg = $upload_result['message'];
-                log_activity($conn, $user_id, "Profile Picture Updated", "User uploaded a new profile picture");
-                
-                // Refresh user data from database
-                $refresh_query = "SELECT * FROM users WHERE id = ?";
-                $refresh_stmt = mysqli_prepare($conn, $refresh_query);
-                mysqli_stmt_bind_param($refresh_stmt, "i", $user_id);
-                mysqli_stmt_execute($refresh_stmt);
-                $refresh_result = mysqli_stmt_get_result($refresh_stmt);
-                $user = mysqli_fetch_assoc($refresh_result);
-                mysqli_stmt_close($refresh_stmt);
-                
-                // If AJAX request, return JSON response
-                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true, 'message' => $upload_result['message']]);
-                    exit;
-                }
-            } else {
-                $error_msg = $upload_result['message'];
-                
-                // If AJAX request, return JSON response
-                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                    header('Content-Type: application/json');
-                    http_response_code(400);
-                    echo json_encode(['success' => false, 'message' => $upload_result['message']]);
-                    exit;
-                }
-            }
+        $upload_file = $_FILES['profile_picture'] ?? ['error' => UPLOAD_ERR_NO_FILE];
+        $upload_result = upload_profile_picture($conn, $user_id, $upload_file);
+        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        if ($upload_result['success']) {
+            $success_msg = $upload_result['message'];
+            log_activity($conn, $user_id, 'Profile Picture Updated', 'User uploaded a new profile picture');
+
+            $refresh_stmt = mysqli_prepare($conn, 'SELECT * FROM users WHERE id = ?');
+            mysqli_stmt_bind_param($refresh_stmt, 'i', $user_id);
+            mysqli_stmt_execute($refresh_stmt);
+            $user = mysqli_fetch_assoc(mysqli_stmt_get_result($refresh_stmt));
+            mysqli_stmt_close($refresh_stmt);
         } else {
-            error_log("No file found in FILES");
-            $error_msg = "No file selected for upload";
-            
-            // If AJAX request, return JSON response
-            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                header('Content-Type: application/json');
+            $error_msg = $upload_result['message'];
+        }
+
+        if ($is_ajax) {
+            header('Content-Type: application/json');
+            if (!$upload_result['success']) {
                 http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'No file uploaded']);
-                exit;
             }
+            echo json_encode(['success' => $upload_result['success'], 'message' => $upload_result['message']]);
+            exit;
         }
     }
     
@@ -966,8 +934,7 @@ mysqli_close($conn);
         const previewImageEl = document.getElementById('previewImage');
         const uploadForm = document.getElementById('pictureUploadForm');
         const cancelPreviewBtn = document.getElementById('cancelPreviewBtn');
-        const uploadStatus = document.getElementById('uploadStatus');
-                const avatar = document.querySelector('.clickable-avatar');
+        const avatar = document.querySelector('.clickable-avatar');
         
         // ===== FILE UPLOAD FUNCTIONS =====
         
@@ -1027,7 +994,6 @@ mysqli_close($conn);
             reader.onload = function(e) {
                 previewImageEl.src = e.target.result;
                 previewContainer.style.display = 'block';
-                uploadStatus.style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
@@ -1037,7 +1003,6 @@ mysqli_close($conn);
             cancelPreviewBtn.addEventListener('click', function() {
                 fileInput.value = '';
                 previewContainer.style.display = 'none';
-                uploadStatus.style.display = 'none';
             });
         }
 

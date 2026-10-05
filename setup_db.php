@@ -24,6 +24,18 @@ if (mysqli_num_rows($check_role) == 0) {
     $status[] = "✓ 'role' column already exists";
 }
 
+// Ensure profile pictures have a persistent field on users
+$profile_picture_column = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'profile_picture'");
+if ($profile_picture_column && mysqli_num_rows($profile_picture_column) === 0) {
+    if (mysqli_query($conn, 'ALTER TABLE users ADD COLUMN profile_picture VARCHAR(255) NULL')) {
+        $status[] = "✓ Added profile_picture column to users";
+    } else {
+        $status[] = "✗ Error adding profile_picture column: " . mysqli_error($conn);
+    }
+} else {
+    $status[] = "✓ profile_picture column already exists";
+}
+
 // 2. Check and create admin user
 $admin_check = mysqli_query($conn, "SELECT id FROM users WHERE username = 'admin'");
 if (mysqli_num_rows($admin_check) == 0) {

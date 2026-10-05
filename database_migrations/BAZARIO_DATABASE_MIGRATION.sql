@@ -151,6 +151,10 @@ WHERE id NOT IN (SELECT order_id FROM order_status_history);
 -- PHASE 5: ADD INDEXES FOR PERFORMANCE
 -- ============================================
 
+-- Ensure profile pictures have a persistent field on users
+ALTER TABLE users
+  ADD COLUMN profile_picture VARCHAR(255) NULL;
+
 -- Step 13: Add indexes to orders table
 ALTER TABLE orders 
   ADD INDEX idx_user_id (user_id),

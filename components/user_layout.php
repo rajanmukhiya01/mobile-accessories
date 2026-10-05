@@ -1,9 +1,10 @@
 <?php
-function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_text = 'BAZARIO', $show_menu = false, $active_page = 'dashboard'): string
+function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_text = 'BAZARIO', $show_menu = false, $active_page = 'dashboard', $show_profile_link = true): string
 {
     $badge = $unread_count > 0 ? '<span style="position: absolute; top: -6px; right: -10px; background: #e74c3c; color: white; font-size: 11px; padding: 2px 6px; border-radius: 12px;">' . (int) $unread_count . '</span>' : '';
     $avatar = function_exists('get_user_avatar_html') ? get_user_avatar_html($user, 'sm') : '';
     $nav_class = $class === 'navbar-top' ? 'navbar' : $class;
+    $profile_link = $show_profile_link ? '<a href="profile.php" style="color: white; text-decoration: none; display: flex; align-items: center;">' . $avatar . '</a>' : '';
 
     return '<div class="' . htmlspecialchars($nav_class) . '" role="banner">'
         . '<div style="display: flex; align-items: center; gap: 15px; width: 100%;">'
@@ -16,7 +17,7 @@ function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_
         . '<i class="fas fa-bell" style="font-size: 18px;"></i>' . $badge
         . '</a>'
         . '</div>'
-        . '<a href="profile.php" style="color: white; text-decoration: none; display: flex; align-items: center;">' . $avatar . '</a>'
+        . $profile_link
         . '</div>'
         . '</div>'
         . '</div>';

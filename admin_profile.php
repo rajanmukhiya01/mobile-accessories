@@ -129,24 +129,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error_msg = implode(", ", $errors);
         }
     } elseif (isset($_POST['upload_picture'])) {
-        // Handle profile picture upload
-        if (!isset($_FILES['profile_picture']) || empty($_FILES['profile_picture']['tmp_name'])) {
-            $error_msg = "No file selected. Please choose a file to upload.";
+        $upload_file = $_FILES['profile_picture'] ?? ['error' => UPLOAD_ERR_NO_FILE];
+        $upload_result = upload_profile_picture($conn, $admin_id, $upload_file);
+        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        if ($upload_result['success']) {
+            $success_msg = $upload_result['message'];
+            $refresh_stmt = mysqli_prepare($conn, 'SELECT * FROM users WHERE id = ?');
+            mysqli_stmt_bind_param($refresh_stmt, 'i', $admin_id);
+            mysqli_stmt_execute($refresh_stmt);
+            $admin = mysqli_fetch_assoc(mysqli_stmt_get_result($refresh_stmt));
+            mysqli_stmt_close($refresh_stmt);
         } else {
-            $upload_result = upload_profile_picture($conn, $admin_id, $_FILES['profile_picture']);
-            if ($upload_result === true) {
-                $success_msg = "Profile picture updated successfully!";
-                // Refresh admin data to get updated picture
-                $refresh_sql = "SELECT * FROM users WHERE id = ?";
-                $refresh_stmt = mysqli_prepare($conn, $refresh_sql);
-                mysqli_stmt_bind_param($refresh_stmt, "i", $admin_id);
-                mysqli_stmt_execute($refresh_stmt);
-                $refresh_result = mysqli_stmt_get_result($refresh_stmt);
-                $admin = mysqli_fetch_assoc($refresh_result);
-                mysqli_stmt_close($refresh_stmt);
-            } else {
-                $error_msg = $upload_result;
+            $error_msg = $upload_result['message'];
+        }
+
+        if ($is_ajax) {
+            header('Content-Type: application/json');
+            if (!$upload_result['success']) {
+                http_response_code(400);
             }
+            echo json_encode(['success' => $upload_result['success'], 'message' => $upload_result['message']]);
+            exit;
         }
     }
 }
@@ -947,9 +951,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 const response = await fetch('admin_profile.php', {
                     method: 'POST',
                     body: formData,
-                    credentials: 'same-origin'
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
-                
+
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Unable to upload the profile picture.');
+                }
+
                 progressBar.style.width = '100%';
                 setTimeout(() => {
                     uploadProgress.style.display = 'none';
