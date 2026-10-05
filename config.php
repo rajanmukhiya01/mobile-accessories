@@ -89,6 +89,22 @@ function ensure_announcements_table($conn) {
     return true;
 }
 
+function ensure_order_status_history_table($conn) {
+    $table_sql = "CREATE TABLE IF NOT EXISTS order_status_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        changed_by INT NULL,
+        note TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_order_id (order_id),
+        INDEX idx_created_at (created_at),
+        CONSTRAINT fk_order_status_history_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+
+    return mysqli_query($conn, $table_sql) === true;
+}
+
 ensure_announcements_table($conn);
 
 // OTP configuration

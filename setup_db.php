@@ -83,7 +83,26 @@ if (mysqli_query($conn, $announcement_sql)) {
     $status[] = "✗ Error creating announcements table: " . mysqli_error($conn);
 }
 
-// 5. Ensure notification preferences table exists
+// 5. Ensure order status history table exists
+$status[] = "Checking order status history table...";
+$history_sql = "CREATE TABLE IF NOT EXISTS order_status_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    changed_by INT NULL,
+    note TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_order_id (order_id),
+    INDEX idx_created_at (created_at),
+    CONSTRAINT fk_order_status_history_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+if (mysqli_query($conn, $history_sql)) {
+    $status[] = "✓ Order status history table ready";
+} else {
+    $status[] = "✗ Error creating order status history table: " . mysqli_error($conn);
+}
+
+// 6. Ensure notification preferences table exists
 $status[] = "Checking notification preferences table...";
 $preferences_sql = "CREATE TABLE IF NOT EXISTS notification_preferences (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -114,7 +133,7 @@ if (mysqli_query($conn, $preferences_sql)) {
     $status[] = "✗ Error creating notification preferences table: " . mysqli_error($conn);
 }
 
-// 6. Verify database structure
+// 7. Verify database structure
 $status[] = "\n=== Database Verification ===";
 $users_result = mysqli_query($conn, "SELECT COUNT(*) as count FROM users");
 $users_row = mysqli_fetch_assoc($users_result);

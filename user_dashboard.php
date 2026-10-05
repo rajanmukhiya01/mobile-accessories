@@ -77,7 +77,7 @@ function build_user_dashboard_url(array $updates = []): string {
         }
     }
 
-    $url = 'user_dashboard.php';dsaq    
+    $url = 'user_dashboard.php';
     if (!empty($query)) {
         $url .= '?' . http_build_query($query);
     }

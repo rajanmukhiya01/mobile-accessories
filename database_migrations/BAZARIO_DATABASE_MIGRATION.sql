@@ -81,10 +81,10 @@ CREATE TABLE IF NOT EXISTS order_status_history (
     order_id INT NOT NULL,
     status VARCHAR(50) NOT NULL,
     changed_by INT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    notes TEXT,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_order (order_id),
-    INDEX idx_timestamp (timestamp),
+  INDEX idx_created_at (created_at),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (changed_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
