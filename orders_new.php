@@ -139,7 +139,7 @@ $total_orders = array_sum($status_counts);
     <title>My Orders - Bazario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css">
+    <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css?v=5">
     <style>
         body {
             background: #f5f7fa;
@@ -228,6 +228,36 @@ $total_orders = array_sum($status_counts);
             background: rgba(44, 90, 160, 0.2);
             color: #ffd700;
             border-left-color: #2c5aa0;
+        }
+
+        .sidebar button,
+        .sidebar-logout-btn {
+            display: block;
+            width: 100%;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .sidebar button:hover,
+        .sidebar-logout-btn:hover {
+            background: #003366;
+            border-left-color: #3498db;
+            padding-left: 30px;
+            color: #fff;
+        }
+
+        .sidebar button i,
+        .sidebar-logout-btn i {
+            margin-right: 10px;
+            width: 20px;
         }
 
         .main-content {

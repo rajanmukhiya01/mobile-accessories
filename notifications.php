@@ -119,7 +119,7 @@ if ($stmt_last) {
     <title>Notifications - Bazario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css">
+    <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css?v=5">
     <style>
         .container-main {
             display: flex;

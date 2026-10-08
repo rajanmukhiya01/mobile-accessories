@@ -61,6 +61,20 @@ body {
     z-index: 1000;
 }
 
+.user-navbar {
+    color: var(--white);
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    width: 100%;
+    min-height: 64px;
+}
+
 .navbar-container {
     max-width: var(--max-width);
     margin: 0 auto;
