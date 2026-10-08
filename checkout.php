@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Generate and send the delivery OTP immediately after checkout to the customer's registered email.
                 $otp_result = generate_delivery_otp($conn, $order_id, $user_id, null, true);
                 if (is_array($otp_result) && !empty($otp_result['otp_id'])) {
-                    $otp_sent = send_delivery_otp($conn, $otp_result['otp_id'], 'email');
+                    $otp_sent = !empty($otp_result['sent']);
                     if ($otp_sent) {
                         $success_msg = "Order placed successfully! Order #" . $order_number . " and the delivery OTP has been emailed to you.";
                     } else {

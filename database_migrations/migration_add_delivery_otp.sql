@@ -22,12 +22,10 @@ CREATE TABLE IF NOT EXISTS delivery_otps (
 CREATE TABLE IF NOT EXISTS otp_verification_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     otp_id INT NOT NULL,
-    order_id INT NOT NULL,
     user_id INT NOT NULL,
     attempt_time DATETIME NOT NULL,
     ip_address VARCHAR(45) DEFAULT NULL,
-    success TINYINT(1) NOT NULL DEFAULT 0,
-    note VARCHAR(255) DEFAULT NULL,
+    result VARCHAR(20) NOT NULL DEFAULT 'failed',
     FOREIGN KEY (otp_id) REFERENCES delivery_otps(id) ON DELETE CASCADE
 );
 

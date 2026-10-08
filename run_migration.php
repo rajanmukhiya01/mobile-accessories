@@ -35,7 +35,8 @@ echo "\n[PHASE 2] Adding timestamp columns to orders table...\n";
 $timestamp_columns = [
     'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
     'updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-    'last_status_changed_at TIMESTAMP NULL'
+    'last_status_changed_at TIMESTAMP NULL',
+    'delivered_at DATETIME NULL'
 ];
 
 foreach ($timestamp_columns as $col_def) {

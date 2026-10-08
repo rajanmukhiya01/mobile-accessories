@@ -31,7 +31,7 @@ mysqli_stmt_close($stmt);
         <a href="admin_otp_manage.php" class="btn btn-sm btn-link">Back to OTPs</a>
         <table class="table table-sm table-striped mt-3">
             <thead>
-                <tr><th>Time</th><th>User</th><th>IP</th><th>Success</th><th>Note</th></tr>
+                <tr><th>Time</th><th>User</th><th>IP</th><th>Result</th></tr>
             </thead>
             <tbody>
                 <?php while ($row = mysqli_fetch_assoc($res)): ?>
@@ -39,8 +39,7 @@ mysqli_stmt_close($stmt);
                         <td><?php echo $row['attempt_time']; ?></td>
                         <td><?php echo htmlspecialchars($row['username']); ?></td>
                         <td><?php echo htmlspecialchars($row['ip_address']); ?></td>
-                        <td><?php echo $row['success'] ? 'Yes' : 'No'; ?></td>
-                        <td><?php echo htmlspecialchars($row['note']); ?></td>
+                        <td><?php echo htmlspecialchars($row['result'] ?? 'failed'); ?></td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>

@@ -221,7 +221,7 @@ function create_notification($conn, $user_id, $order_id, $type, $title, $message
         return false;
     }
 
-    $order_id = (int)($order_id ?: 0);
+    $order_id = $order_id ? (int)$order_id : null;
     $link = $link ?: '';
     mysqli_stmt_bind_param($stmt, 'iissss', $user_id, $order_id, $title, $message, $type, $link);
     $result = mysqli_stmt_execute($stmt);

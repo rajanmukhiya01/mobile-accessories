@@ -60,7 +60,7 @@ UPDATE orders SET status = 'Delivered' WHERE status = 'Delivered';
 CREATE TABLE IF NOT EXISTS notifications (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
-    order_id INT NOT NULL,
+  order_id INT NULL,
     type VARCHAR(50) NOT NULL COMMENT 'order_placed, order_confirmed, processing, packing, shipped, delivered, cancelled',
     title VARCHAR(100) NOT NULL,
     message TEXT NOT NULL,

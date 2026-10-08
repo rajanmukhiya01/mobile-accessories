@@ -4,6 +4,8 @@ require_once "config.php";
 require_once "includes/notification_service.php";
 require_once "includes/delivery_otp_service.php";
 
+header('Content-Type: application/json; charset=utf-8');
+
 // Only logged in users can request sending OTP to their selected method
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     http_response_code(401);
@@ -71,7 +73,8 @@ $ok = send_delivery_otp($conn, $otp_row['id'], $method);
 if ($ok) {
     echo json_encode(['success' => true, 'message' => 'OTP sent via ' . strtoupper($method)]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to send OTP. Check contact details or try another method.']);
+    http_response_code(502);
+    echo json_encode(['success' => false, 'message' => 'OTP could not be sent. Please try again.']);
 }
 
 ?>

@@ -1,6 +1,28 @@
 <?php
 require_once __DIR__ . '/mail_helper.php';
 
+function ensure_delivery_otp_verification_schema($conn) {
+    $otp_column = mysqli_query($conn, "SHOW COLUMNS FROM delivery_otps LIKE 'verified_at'");
+    if (!$otp_column) {
+        return false;
+    }
+
+    if (mysqli_num_rows($otp_column) === 0 && !mysqli_query($conn, 'ALTER TABLE delivery_otps ADD COLUMN verified_at DATETIME NULL AFTER max_attempts')) {
+        return false;
+    }
+
+    $order_column = mysqli_query($conn, "SHOW COLUMNS FROM orders LIKE 'delivered_at'");
+    if (!$order_column) {
+        return false;
+    }
+
+    if (mysqli_num_rows($order_column) === 0 && !mysqli_query($conn, 'ALTER TABLE orders ADD COLUMN delivered_at DATETIME NULL')) {
+        return false;
+    }
+
+    return true;
+}
+
 function generate_delivery_otp($conn, $order_id, $user_id, $method = null, $send_immediately = false) {
     if (!$conn || !$order_id || !$user_id) {
         return false;
@@ -9,7 +31,11 @@ function generate_delivery_otp($conn, $order_id, $user_id, $method = null, $send
     $existing = mysqli_query($conn, "SELECT id, status, expires_at FROM delivery_otps WHERE order_id = $order_id LIMIT 1");
     if ($existing && $row = mysqli_fetch_assoc($existing)) {
         if ($row['status'] === 'pending' && (!empty($row['expires_at']) && strtotime($row['expires_at']) > time())) {
-            return ['otp_id' => (int)$row['id'], 'otp' => null];
+            $result = ['otp_id' => (int)$row['id'], 'otp' => null];
+            if ($send_immediately) {
+                $result['sent'] = send_delivery_otp($conn, (int)$row['id'], $method ?: 'email');
+            }
+            return $result;
         }
     }
 
@@ -36,11 +62,12 @@ function generate_delivery_otp($conn, $order_id, $user_id, $method = null, $send
     $otp_id = mysqli_insert_id($conn);
     mysqli_stmt_close($stmt);
 
+    $result = ['otp_id' => (int)$otp_id, 'otp' => $otp_plain];
     if ($send_immediately) {
-        send_delivery_otp($conn, $otp_id, $method);
+        $result['sent'] = send_delivery_otp($conn, $otp_id, $method);
     }
 
-    return ['otp_id' => (int)$otp_id, 'otp' => $otp_plain];
+    return $result;
 }
 
 function send_delivery_otp($conn, $otp_id, $method = 'email') {
@@ -63,6 +90,11 @@ function send_delivery_otp($conn, $otp_id, $method = 'email') {
     $otp = mysqli_fetch_assoc($result);
     mysqli_stmt_close($stmt);
     if (!$otp) {
+        return false;
+    }
+
+    if (!empty($otp['expires_at']) && strtotime($otp['expires_at']) <= time()) {
+        mysqli_query($conn, "UPDATE delivery_otps SET status = 'expired' WHERE id = " . (int)$otp_id);
         return false;
     }
 
@@ -91,6 +123,10 @@ function send_delivery_otp($conn, $otp_id, $method = 'email') {
 function verify_delivery_otp($conn, $order_id, $entered_otp, $ip = null) {
     if (!$conn || !$order_id || empty($entered_otp)) {
         return ['success' => false, 'message' => 'Invalid request.'];
+    }
+
+    if (!ensure_delivery_otp_verification_schema($conn)) {
+        return ['success' => false, 'message' => 'Unable to verify OTP at this time.'];
     }
 
     $sql = "SELECT * FROM delivery_otps WHERE order_id = ? LIMIT 1";
@@ -126,18 +162,29 @@ function verify_delivery_otp($conn, $order_id, $entered_otp, $ip = null) {
         return ['success' => false, 'message' => 'Too many attempts. Please request a new OTP.'];
     }
 
-    $stored_plain = base64_decode($otp['otp_encrypted']);
-    if ($stored_plain === $entered_otp) {
+    if (password_verify($entered_otp, $otp['otp_hash'])) {
         mysqli_query($conn, "UPDATE delivery_otps SET status = 'verified', verified_at = NOW() WHERE id = {$otp['id']}");
         mysqli_query($conn, "UPDATE orders SET status = 'Delivered', delivered_at = NOW() WHERE id = $order_id");
-        $ip_value = $ip ?? '';
-        mysqli_query($conn, "INSERT INTO otp_verification_logs (otp_id, order_id, user_id, attempt_time, ip_address, success, note) VALUES ({$otp['id']}, $order_id, {$otp['user_id']}, NOW(), '$ip_value', 1, 'Verified successfully')");
+        $ip_value = substr((string)($ip ?? ''), 0, 45);
+        $log_result = 'success';
+        $log_stmt = mysqli_prepare($conn, 'INSERT INTO otp_verification_logs (otp_id, user_id, attempt_time, ip_address, result) VALUES (?, ?, NOW(), ?, ?)');
+        if ($log_stmt) {
+            mysqli_stmt_bind_param($log_stmt, 'iiss', $otp['id'], $otp['user_id'], $ip_value, $log_result);
+            mysqli_stmt_execute($log_stmt);
+            mysqli_stmt_close($log_stmt);
+        }
         create_notification($conn, (int)$otp['user_id'], $order_id, 'delivery_otp_verified', 'Delivery OTP Verified', 'Your delivery OTP was verified successfully for order #' . $order_id . '.', 'track_order.php?order_id=' . $order_id);
         notify_admins($conn, $order_id, 'delivery_otp_verified', 'Delivery OTP Verified', 'A customer verified the delivery OTP for order #' . $order_id . '.', 'admin_orders_manage.php');
         return ['success' => true, 'message' => 'OTP verified successfully. Order marked as delivered.'];
     }
 
-    $ip_value = $ip ?? '';
-    mysqli_query($conn, "INSERT INTO otp_verification_logs (otp_id, order_id, user_id, attempt_time, ip_address, success, note) VALUES ({$otp['id']}, $order_id, {$otp['user_id']}, NOW(), '$ip_value', 0, 'Invalid OTP')");
+    $ip_value = substr((string)($ip ?? ''), 0, 45);
+    $log_result = 'failed';
+    $log_stmt = mysqli_prepare($conn, 'INSERT INTO otp_verification_logs (otp_id, user_id, attempt_time, ip_address, result) VALUES (?, ?, NOW(), ?, ?)');
+    if ($log_stmt) {
+        mysqli_stmt_bind_param($log_stmt, 'iiss', $otp['id'], $otp['user_id'], $ip_value, $log_result);
+        mysqli_stmt_execute($log_stmt);
+        mysqli_stmt_close($log_stmt);
+    }
     return ['success' => false, 'message' => 'Incorrect OTP. Please try again.'];
 }

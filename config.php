@@ -4,23 +4,33 @@
  * Contains database connection settings and helper functions
  */
 
-// Database credentials
 define('DB_SERVER', '127.0.0.1');
 define('DB_PORT', 3306);
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'Mproject');
 
-// Email / OTP configuration
-// Replace the placeholder values below with your real Gmail address and Google App Password.
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USER', 'shresthaaayushma70@gmail.com');
-define('SMTP_PASS', 'hheeyloagtwgzmxu');
-define('SMTP_SECURE', 'tls');
-define('MAIL_FROM', 'shresthaaayushma70@gmail.com');
-define('MAIL_FROM_NAME', 'Bazario');
+// Load local secrets from ignored .env; process/server environment takes precedence.
+$localEnvFile = __DIR__ . DIRECTORY_SEPARATOR . '.env';
+if (is_file($localEnvFile)) {
+    $localEnv = @parse_ini_file($localEnvFile, false, INI_SCANNER_RAW);
+    if (is_array($localEnv)) {
+        foreach ($localEnv as $envName => $envValue) {
+            if (getenv($envName) === false && is_string($envValue)) {
+                putenv($envName . '=' . $envValue);
+                $_ENV[$envName] = $envValue;
+            }
+        }
+    }
+}
 
+if (!defined('SMTP_HOST')) define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
+if (!defined('SMTP_PORT')) define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 587));
+if (!defined('SMTP_USERNAME')) define('SMTP_USERNAME', getenv('SMTP_USER') ?: '');
+if (!defined('SMTP_PASSWORD')) define('SMTP_PASSWORD', getenv('SMTP_PASS') ?: '');
+if (!defined('SMTP_SECURE')) define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
+if (!defined('MAIL_FROM')) define('MAIL_FROM', getenv('MAIL_FROM') ?: SMTP_USERNAME);
+if (!defined('MAIL_FROM_NAME')) define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Bazario');
 // Create database connection (use TCP host and explicit port)
 $conn = @mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
 

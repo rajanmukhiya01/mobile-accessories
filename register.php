@@ -12,6 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once "config.php";
+require_once __DIR__ . '/includes/notification_service.php';
 
 $username = $email = $phone = $dob = $password = $confirm_password = "";
 $username_err = $email_err = $phone_err = $dob_err = $password_err = $confirm_password_err = "";
@@ -102,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             
             if (mysqli_stmt_execute($stmt)) {
                 $new_user_id = mysqli_insert_id($conn);
-                notify_admins($conn, 0, 'new_user', 'New User Registered', 'A new user account was created.', 'admin_dashboard.php');
+                notify_admins($conn, null, 'new_user', 'New User Registered', 'A new user account was created.', 'admin_dashboard.php');
                 $success_msg = "Registration successful! Redirecting to login...";
                 header("refresh:2;url=minor.php");
             } else {

@@ -24,6 +24,20 @@ require_once __DIR__ . '/includes/notification_service.php';
 
 $admin_id = $_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
+$otp_feedback = '';
+$otp_feedback_class = 'success';
+
+if (($_GET['success'] ?? '') === 'otp_regenerated') {
+    $otp_feedback = 'A new delivery OTP was emailed to the customer.';
+} elseif (($_GET['success'] ?? '') === 'otp_resent') {
+    $otp_feedback = 'The delivery OTP was emailed to the customer.';
+} elseif (($_GET['error'] ?? '') === 'otp_send_failed') {
+    $otp_feedback = 'The OTP email could not be sent. Please try again later.';
+    $otp_feedback_class = 'danger';
+} elseif (($_GET['error'] ?? '') === 'otp_generate_failed') {
+    $otp_feedback = 'A new OTP could not be generated. Please try again.';
+    $otp_feedback_class = 'danger';
+}
 
 // Fetch admin user details for avatar display
 $admin_user_sql = "SELECT * FROM users WHERE id = ?";
@@ -410,6 +424,12 @@ $all_statuses = ['Order Placed', 'Confirmed', 'Processing', 'Packing', 'Out for 
         <div class="section-title">
             <i class="fas fa-list"></i> Order Management
         </div>
+
+        <?php if ($otp_feedback !== ''): ?>
+            <div class="alert alert-<?php echo htmlspecialchars($otp_feedback_class); ?>" role="status">
+                <?php echo htmlspecialchars($otp_feedback); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Filters -->
         <div class="filters">

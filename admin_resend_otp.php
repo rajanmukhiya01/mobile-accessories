@@ -42,8 +42,14 @@ if (!$order) {
 if ($action === 'regen') {
     // Delete existing OTP and generate new
     mysqli_query($conn, "DELETE FROM delivery_otps WHERE order_id = {$order_id}");
-    generate_delivery_otp($conn, $order_id, $order['user_id']);
-    header('Location: admin_orders_manage.php?success=otp_regenerated');
+    $new_otp = generate_delivery_otp($conn, $order_id, $order['user_id']);
+    if (!$new_otp || empty($new_otp['otp_id'])) {
+        header('Location: admin_orders_manage.php?error=otp_generate_failed');
+        exit;
+    }
+
+    $sent = send_delivery_otp($conn, $new_otp['otp_id'], 'email');
+    header('Location: admin_orders_manage.php?' . ($sent ? 'success=otp_regenerated' : 'error=otp_send_failed'));
     exit;
 } else {
     // Resend existing OTP via preferred method
