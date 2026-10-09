@@ -621,7 +621,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p style="color: rgba(255,255,255,0.6); margin: 0 0 15px 0; font-size: 12px;">
                     <span style="background: #667eea; padding: 3px 8px; border-radius: 4px;">ADMIN</span>
                 </p>
-                <form action="logout.php" method="POST" style="margin: 0;">
+                <form action="../../auth/logout.php" method="POST" style="margin: 0;">
                     <button type="submit" style="display: block; width: 100%; background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 13px;">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>

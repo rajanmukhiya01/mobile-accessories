@@ -945,7 +945,7 @@ if ($stmt) {
                         <div class="product-info">
                             <span class="product-category"><?php echo htmlspecialchars($product['category']); ?></span>
                             <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
-                            <p class="product-desc"><?php echo htmlspecialchars(substr($product['description'], 0, 60)); ?>...</p>
+                            <p class="product-desc"><?php $productDescription = (string) ($product['description'] ?? ''); echo htmlspecialchars(strlen($productDescription) > 60 ? substr($productDescription, 0, 60) . '...' : $productDescription); ?></p>
                             
                             <?php if ($product['quantity'] > 0): ?>
                                 <div class="product-stock in-stock">

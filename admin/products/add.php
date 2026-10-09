@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category = sanitize_input($_POST['category']);
     $price = floatval($_POST['price']);
     $quantity = intval($_POST['quantity']);
-    $description = sanitize_input($_POST['description']);
+    $description = trim((string) ($_POST['description'] ?? ''));
     
     // Validate inputs
     if (empty($name)) {
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     VALUES (?, ?, ?, ?, ?, ?)";
             
             if ($stmt = mysqli_prepare($conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "ssidis", $name, $category, $price, $quantity, $description, $upload_path);
+                mysqli_stmt_bind_param($stmt, "ssdiss", $name, $category, $price, $quantity, $description, $upload_path);
                 
                 if (mysqli_stmt_execute($stmt)) {
                     $success_msg = "Product added successfully!";
@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="text-muted" style="margin: 0; font-size: 12px;">
                     <span class="admin-badge">ADMIN</span>
                 </p>
-                <form action="logout.php" method="POST">
+                <form action="../../auth/logout.php" method="POST">
                     <button type="submit" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>

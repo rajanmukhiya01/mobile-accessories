@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category = sanitize_input($_POST['category']);
     $price = floatval($_POST['price']);
     $quantity = intval($_POST['quantity']);
-    $description = sanitize_input($_POST['description']);
+    $description = trim((string) ($_POST['description'] ?? ''));
     
     $errors = [];
     

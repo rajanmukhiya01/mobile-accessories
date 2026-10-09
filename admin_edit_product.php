@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category = sanitize_input($_POST['category']);
     $price = floatval($_POST['price']);
     $quantity = intval($_POST['quantity']);
-    $description = sanitize_input($_POST['description']);
+    $description = trim((string) ($_POST['description'] ?? ''));
     $current_image = $product['image'];
     
     // Validate inputs
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "UPDATE product SET name = ?, category = ?, price = ?, quantity = ?, description = ?, image = ? WHERE id = ?";
             
             if ($stmt = mysqli_prepare($conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "ssidisi", $name, $category, $price, $quantity, $description, $new_image, $product_id);
+                mysqli_stmt_bind_param($stmt, "ssdissi", $name, $category, $price, $quantity, $description, $new_image, $product_id);
                 
                 if (mysqli_stmt_execute($stmt)) {
                     $success_msg = "Product updated successfully!";
@@ -318,7 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="text-muted" style="margin: 0; font-size: 12px;">
                     <span class="admin-badge">ADMIN</span>
                 </p>
-                <form action="logout.php" method="POST">
+                <form action="auth/logout.php" method="POST">
                     <button type="submit" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>

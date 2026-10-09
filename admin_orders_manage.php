@@ -412,7 +412,7 @@ $all_statuses = ['Order Placed', 'Confirmed', 'Processing', 'Packing', 'Out for 
         <div class="navbar-links">
             <a href="admin_dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
             <a href="admin_profile.php" style="display: flex; align-items: center; gap: 5px;"><?php echo get_user_avatar_html($admin_user, 'sm'); ?> Profile</a>
-            <form action="logout.php" method="POST" style="margin: 0; display: inline;">
+            <form action="auth/logout.php" method="POST" style="margin: 0; display: inline;">
                 <button type="submit" style="background: none; border: none; color: white; cursor: pointer; text-decoration: none;">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>

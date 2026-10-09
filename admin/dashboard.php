@@ -299,7 +299,7 @@ while ($row = $result->fetch_assoc()) {
                 <p class="text-muted" style="margin: 0; font-size: 12px;">
                     <span class="admin-badge">ADMIN</span>
                 </p>
-                <form action="logout.php" method="POST">
+                <form action="../auth/logout.php" method="POST">
                     <button type="submit" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>

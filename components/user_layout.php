@@ -42,7 +42,7 @@ function render_user_sidebar($active_page = 'dashboard'): string
         $html .= '<a href="' . $href . '" class="' . $active . '"><i class="' . $icon . '"></i> ' . $label . '</a>';
     }
 
-    $html .= '<form action="logout.php" method="POST" style="margin: 0; padding: 0;">'
+    $html .= '<form action="auth/logout.php" method="POST" style="margin: 0; padding: 0;">'
         . '<button type="submit" class="sidebar-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>'
         . '</form></div>';
 

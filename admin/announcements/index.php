@@ -208,7 +208,7 @@ if ($res) {
             <a href="admin_profile.php"><i class="fas fa-user-circle"></i> Admin Profile</a>
             <div class="user-info" style="margin-top: auto; padding: 15px 20px; color: rgba(255,255,255,0.8); border-top: 1px solid rgba(255,255,255,0.2);">
                 <p><strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></strong></p>
-                <form action="logout.php" method="POST">
+                <form action="../../auth/logout.php" method="POST">
                     <button type="submit" class="logout-btn" style="background: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;"> <i class="fas fa-sign-out-alt"></i> Logout </button>
                 </form>
             </div>
