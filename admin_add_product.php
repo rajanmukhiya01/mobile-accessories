@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         .sidebar {
             width: 250px;
-            background: #2c3e50;
+            background: #001a33;
             padding: 20px 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             position: fixed;
@@ -115,8 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .sidebar a, .sidebar button {
             display: block;
             width: 100%;
-            color: #ecf0f1;
-            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 14px 20px;
             text-decoration: none;
             transition: all 0.3s;
             border-left: 4px solid transparent;
@@ -127,19 +127,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         .sidebar a:hover, .sidebar button:hover {
-            background: #34495e;
-            border-left-color: #667eea;
-            padding-left: 30px;
+            background: #003366;
+            border-left-color: #3498db;
+            color: white;
+            padding-left: 24px;
         }
         
         .sidebar a i, .sidebar button i {
-            margin-right: 10px;
-            width: 20px;
+            margin-right: 12px;
+            width: 18px;
         }
         
         .sidebar a.active {
-            background: #34495e;
+            background: #003366;
             border-left-color: #667eea;
+            color: white;
+            font-weight: 600;
         }
         
         .content {
@@ -276,9 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <div class="header">
-        <i class="fas fa-user-shield"></i> Admin Dashboard - Mobile Accessories
-    </div>
+    <?php $adminBasePath = ''; require __DIR__ . '/components/admin_heading_bar.php'; ?>
 
     <div class="container-main">
         <div class="sidebar">
@@ -290,6 +291,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </a>
             <a href="admin_orders_manage.php">
                 <i class="fas fa-shopping-bag"></i> Orders Management
+            </a>
+            <a href="admin_announcements.php">
+                <i class="fas fa-bullhorn"></i> Announcements
             </a>
             <a href="admin_profile.php">
                 <i class="fas fa-user"></i> Profile

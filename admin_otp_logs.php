@@ -23,10 +23,12 @@ mysqli_stmt_close($stmt);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>OTP Verification Logs</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
-<body class="p-4">
-    <div class="container">
+<body>
+    <?php $adminBasePath = ''; require __DIR__ . '/components/admin_heading_bar.php'; ?>
+    <div class="container p-4">
         <h3>OTP Verification Logs for OTP #<?php echo $otp_id; ?></h3>
         <a href="admin_otp_manage.php" class="btn btn-sm btn-link">Back to OTPs</a>
         <table class="table table-sm table-striped mt-3">

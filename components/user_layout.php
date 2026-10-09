@@ -1,5 +1,5 @@
 <?php
-function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_text = 'BAZARIO', $show_menu = false, $active_page = 'dashboard', $show_profile_link = true): string
+function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_text = 'BAZARIO', $show_menu = false, $active_page = 'dashboard', $show_profile_link = true, $subtitle = 'Online Shopping Store'): string
 {
     $badge = $unread_count > 0 ? '<span style="position: absolute; top: -6px; right: -10px; background: #e74c3c; color: white; font-size: 11px; padding: 2px 6px; border-radius: 12px;">' . (int) $unread_count . '</span>' : '';
     $avatar = function_exists('get_user_avatar_html') ? get_user_avatar_html($user, 'sm') : '';
@@ -11,7 +11,7 @@ function render_user_navbar($user, $unread_count = 0, $class = 'navbar', $brand_
         . '<div style="display: flex; align-items: center; gap: 15px; width: 100%;">'
         . '<i class="fas fa-shopping-bag" style="font-size: 28px;"></i>'
         . '<span class="navbar-brand" style="margin: 0;">' . htmlspecialchars($brand_text) . '</span>'
-        . '<span style="opacity: 0.9; font-size: 12px; margin-left: 12px;">Online Shopping Store</span>'
+        . '<span style="opacity: 0.9; font-size: 12px; margin-left: 12px;">' . htmlspecialchars($subtitle) . '</span>'
         . '<div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">'
         . '<div style="position: relative;">'
         . '<a href="notifications.php" style="color: white; text-decoration: none; position: relative;">'

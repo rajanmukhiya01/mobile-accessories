@@ -595,9 +595,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <!-- Navigation Bar -->
-    <div class="header">
-        <i class="fas fa-shopping-bag"></i> BAZARIO Admin Profile
-    </div>
+    <?php $adminBasePath = ''; require __DIR__ . '/components/admin_heading_bar.php'; ?>
 
     <!-- Main Container with Sidebar -->
     <div class="container-main">

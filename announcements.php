@@ -44,6 +44,16 @@ if ($conn) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css">
     <style>
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e0e0e0;
+            display: block;
+            flex-shrink: 0;
+        }
+
         body {
             background: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -167,7 +177,7 @@ if ($conn) {
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'announcements', false); ?>
+    <?php echo render_user_navbar($user, $unread_count, 'navbar', 'BAZARIO', false, 'announcements', true); ?>
     <div class="container-main">
         <?php echo render_user_sidebar('announcements'); ?>
         <div class="content">

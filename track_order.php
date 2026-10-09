@@ -218,6 +218,7 @@ if ($stmt_last) {
     <link rel="stylesheet" href="assets/css/BAZARIO_STYLES.css">
     <style>
         body { background: #f5f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1f2937; }
+        .user-navbar { padding: 15px 30px; text-align: left; font-size: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .navbar-top { background: linear-gradient(135deg, #001a33 0%, #003366 100%); color: white; padding: 15px 24px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 6px 18px rgba(0,0,0,0.12); position: sticky; top: 0; z-index: 1100; min-height: 64px; }
         .navbar-brand-text { font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
         .navbar-icons { display:flex; gap:16px; align-items:center; }
@@ -227,6 +228,33 @@ if ($stmt_last) {
         .sidebar { width: 250px; background:#001a33; min-height: calc(100vh - 60px); padding: 20px 0; position:fixed; left:0; top:60px; overflow-y:auto; }
         .sidebar a { display:block; color:#ecf0f1; padding:14px 20px; text-decoration:none; transition:all 0.3s; border-left:4px solid transparent; }
         .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color:#ffd700; border-left-color:#2c5aa0; }
+        .sidebar button,
+        .sidebar-logout-btn {
+            display: block;
+            width: 100%;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .sidebar button:hover,
+        .sidebar-logout-btn:hover {
+            background: #003366;
+            border-left-color: #3498db;
+            padding-left: 30px;
+            color: #fff;
+        }
+        .sidebar button i,
+        .sidebar-logout-btn i {
+            margin-right: 10px;
+            width: 20px;
+        }
         .main-content { margin-left:250px; padding:28px; padding-top: 24px; }
         .card { border:0; border-radius:16px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
         .hero-card { background: linear-gradient(135deg, #0f3b62 0%, #1f6f9e 100%); color:white; padding:24px; border-radius:20px; margin-bottom:22px; }
@@ -256,7 +284,7 @@ if ($stmt_last) {
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <?php echo render_user_navbar($current_user, $unread_count, 'navbar', 'BAZARIO', false, 'orders'); ?>
+    <?php echo render_user_navbar($current_user, $unread_count, 'navbar', 'BAZARIO', false, 'orders', true, 'Order Tracking'); ?>
 
     <?php echo render_user_sidebar('orders'); ?>
 

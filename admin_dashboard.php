@@ -268,13 +268,7 @@ while ($row = $result->fetch_assoc()) {
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <i class="fas fa-shopping-bag" style="font-size: 28px;"></i>
-            <span class="navbar-brand" style="margin: 0;">BAZARIO</span>
-            <span style="opacity: 0.9; font-size: 12px; margin-left: auto;">Admin Dashboard</span>
-        </div>
-    </div>
+    <?php $adminBasePath = ''; require __DIR__ . '/components/admin_heading_bar.php'; ?>
 
     <div class="container-main">
         <div class="sidebar">

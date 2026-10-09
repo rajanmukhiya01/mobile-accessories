@@ -15,10 +15,12 @@ $res = mysqli_query($conn, $sql);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin - Delivery OTPs</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
-<body class="p-4">
-    <div class="container">
+<body>
+    <?php $adminBasePath = '../../'; require __DIR__ . '/../../components/admin_heading_bar.php'; ?>
+    <div class="container p-4">
         <h2>Delivery OTP Management</h2>
         <p>List of delivery OTPs and actions.</p>
 

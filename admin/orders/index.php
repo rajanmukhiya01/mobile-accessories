@@ -402,23 +402,7 @@ $all_statuses = ['Order Placed', 'Confirmed', 'Processing', 'Packing', 'Out for 
     <link rel="stylesheet" href="assets/css/responsive.css?v=4">
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar">
-        <div class="navbar-brand">
-            <i class="fas fa-shopping-bag"></i>
-            <span>BAZARIO</span>
-            <span style="font-size: 12px; opacity: 0.8;">Admin Dashboard</span>
-        </div>
-        <div class="navbar-links">
-            <a href="admin_dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="admin_profile.php" style="display: flex; align-items: center; gap: 5px;"><?php echo get_user_avatar_html($admin_user, 'sm'); ?> Profile</a>
-            <form action="../../auth/logout.php" method="POST" style="margin: 0; display: inline;">
-                <button type="submit" style="background: none; border: none; color: white; cursor: pointer; text-decoration: none;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
-        </div>
-    </div>
+    <?php $adminBasePath = '../../'; require __DIR__ . '/../../components/admin_heading_bar.php'; ?>
 
     <div class="container-main">
         <div class="section-title">
