@@ -4,12 +4,6 @@
  * Contains database connection settings and helper functions
  */
 
-define('DB_SERVER', '127.0.0.1');
-define('DB_PORT', 3306);
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '');
-define('DB_NAME', 'Mproject');
-
 // Load local secrets from ignored .env; process/server environment takes precedence.
 $localEnvFile = __DIR__ . DIRECTORY_SEPARATOR . '.env';
 if (is_file($localEnvFile)) {
@@ -23,6 +17,12 @@ if (is_file($localEnvFile)) {
         }
     }
 }
+
+define('DB_SERVER', getenv('DB_HOST') ?: '127.0.0.1');
+define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
+define('DB_USERNAME', getenv('DB_USER') ?: 'root');
+define('DB_PASSWORD', getenv('DB_PASS') ?: '');
+define('DB_NAME', getenv('DB_NAME') ?: 'Mproject');
 
 if (!defined('SMTP_HOST')) define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
 if (!defined('SMTP_PORT')) define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 587));

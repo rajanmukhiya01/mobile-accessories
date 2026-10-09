@@ -14,7 +14,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         header("Location: ../admin/dashboard.php");
     } else {
-        header("Location: ../pages/dashboard.php");
+        header("Location: ../user_dashboard.php");
     }
     exit;
 }

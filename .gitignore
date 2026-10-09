@@ -5,7 +5,8 @@ composer.phar
 .vscode/
 node_modules/
 .idea/
-uploads/
+uploads/*
+!uploads/.htaccess
 dev/
 docs/
 database/*.sql
